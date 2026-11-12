@@ -6,11 +6,15 @@ using AttendanceTracker.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.Extensions.Options;
+using System.Xml.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.Configure<KeyManagementOptions>(options => options.XmlRepository = new MemoryXmlRepository());
 builder.Services.AddSingleton<AttendanceStore>();
-builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.WithOrigins("http://localhost:5173", "http://localhost:4173").AllowAnyHeader().AllowAnyMethod()));
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.WithOrigins("http://localhost:5173", "http://localhost:4173", "http://127.0.0.1:5173").AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddAuthentication("DemoBearer").AddScheme<AuthenticationSchemeOptions, DemoBearerHandler>("DemoBearer", _ => { });
 builder.Services.AddAuthorization();
 var app = builder.Build();
@@ -105,4 +109,11 @@ static class DemoAccounts
     };
     public static Account? Find(string email) => Lookup.GetValueOrDefault(email) as Account;
     public sealed record Account(string Id, string Name, string Role, string Email);
+}
+
+public sealed class MemoryXmlRepository : IXmlRepository
+{
+    private readonly System.Collections.Concurrent.ConcurrentBag<XElement> _elements = [];
+    public IReadOnlyCollection<XElement> GetAllElements() => _elements.Select(element => new XElement(element)).ToArray();
+    public void StoreElement(XElement element, string friendlyName) => _elements.Add(new XElement(element));
 }
