@@ -8,6 +8,7 @@ public sealed class ClassSession(string id, string course, string room, string c
     public string Course { get; } = course;
     public string Room { get; } = room;
     public string Code { get; set; } = code;
+    public DateTimeOffset CodeExpiresAt { get; set; } = DateTimeOffset.UtcNow.AddSeconds(60);
     public DateTimeOffset StartsAt { get; } = startsAt;
     public bool IsOpen { get; set; } = true;
     public List<AttendanceEntry> Entries { get; } = [];

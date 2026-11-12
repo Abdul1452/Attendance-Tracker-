@@ -62,7 +62,7 @@ public sealed class AttendanceStore
         {
             var session = _sessions.FirstOrDefault(item => item.Id == sessionId && item.IsOpen);
             if (session is null) return (false, "This check-in session has ended.", null);
-            if (!string.Equals(session.Code, code, StringComparison.Ordinal)) return (false, "That code has expired. Ask your teacher to show the latest QR code.", null);
+            if (DateTimeOffset.UtcNow >= session.CodeExpiresAt || !string.Equals(session.Code, code, StringComparison.Ordinal)) return (false, "That code has expired. Ask your teacher to show the latest QR code.", null);
             var student = _students.FirstOrDefault(item => item.Id == studentId);
             if (student is null) return (false, "Student account was not found.", null);
             var existing = session.Entries.FirstOrDefault(entry => entry.StudentId == studentId);
@@ -79,6 +79,7 @@ public sealed class AttendanceStore
         {
             var session = _sessions.FirstOrDefault(item => item.Id == id && item.IsOpen) ?? throw new InvalidOperationException("Session is no longer active.");
             session.Code = NewCode();
+            session.CodeExpiresAt = DateTimeOffset.UtcNow.AddSeconds(60);
             return session;
         }
     }

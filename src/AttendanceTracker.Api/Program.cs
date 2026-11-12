@@ -6,6 +6,7 @@ using AttendanceTracker.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<AttendanceStore>();
@@ -38,7 +39,7 @@ app.MapGet("/api/dashboard", [Authorize(Roles = "Teacher")] (AttendanceStore sto
 app.MapGet("/api/sessions/active", (AttendanceStore store) =>
 {
     var session = store.GetActiveSession();
-    return session is null ? Results.NoContent() : Results.Ok(ToSession(session));
+    return session is null ? Results.NoContent() : Results.Ok(ToStudentSession(session));
 });
 app.MapPost("/api/sessions", [Authorize(Roles = "Teacher")] (AttendanceStore store) => Results.Ok(ToSession(store.StartSession()))).RequireAuthorization();
 app.MapPost("/api/sessions/{id}/close", [Authorize(Roles = "Teacher")] (string id, AttendanceStore store) => store.CloseSession(id) ? Results.NoContent() : Results.NotFound()).RequireAuthorization();
@@ -60,7 +61,8 @@ app.MapGet("/api/me/attendance", [Authorize(Roles = "Student")] (ClaimsPrincipal
 }).RequireAuthorization();
 app.Run();
 
-static object ToSession(AttendanceTracker.Domain.ClassSession session) => new { session.Id, session.Course, session.Room, session.Code, session.StartsAt, session.IsOpen, codeExpiresAt = DateTimeOffset.UtcNow.AddSeconds(60), entries = session.Entries };
+static object ToSession(AttendanceTracker.Domain.ClassSession session) => new { session.Id, session.Course, session.Room, session.Code, session.StartsAt, session.IsOpen, session.CodeExpiresAt, entries = session.Entries };
+static object ToStudentSession(AttendanceTracker.Domain.ClassSession session) => new { session.Id, session.Course, session.Room, session.StartsAt, session.IsOpen, session.CodeExpiresAt };
 public sealed record LoginRequest(string Email, string Password);
 public sealed record CheckInRequest(string SessionId, string Code);
 
