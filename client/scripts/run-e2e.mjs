@@ -46,9 +46,9 @@ const stop = async () => {
 }
 
 try {
-  const api = start(dotnet, [apiDll, '--urls', 'http://127.0.0.1:5080'], root)
+  const api = start(dotnet, [apiDll, '--urls', 'http://127.0.0.1:5080'], resolve(root, 'src/AttendanceTracker.Api'))
   await waitFor('http://127.0.0.1:5080/health', api)
-  const gateway = start(dotnet, [gatewayDll, '--urls', 'http://127.0.0.1:5050'], root)
+  const gateway = start(dotnet, [gatewayDll, '--urls', 'http://127.0.0.1:5050'], resolve(root, 'src/AttendanceTracker.Gateway'))
   await waitFor('http://127.0.0.1:5050/health', gateway)
   const vite = start(process.execPath, [resolve(client, 'node_modules/vite/bin/vite.js'), '--host', '127.0.0.1'], client)
   await waitFor('http://127.0.0.1:5173', vite)

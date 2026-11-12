@@ -106,7 +106,8 @@ The MVP intentionally leaves substantial work for all four team members. Agree o
 3. Expand end-to-end tests to cover duplicate attempts, code expiry/rotation, closed sessions, permissions, and responsive layouts.
 4. Test camera QR scanning on real mobile devices and provide accessible fallbacks when camera permission is denied or unsupported.
 5. Review every screen and form for WCAG 2.2 AA contrast, keyboard access, focus order, labels, and screen-reader feedback.
-6. Add loading, offline, network error, no-results, and recovery states, then update the OpenAPI examples and runbook.
+6. Add loading, offline, network error, no-results, and recovery states; finish the dark theme and responsive design tokens.
+7. Update OpenAPI examples and the team runbook after the remaining routes and flows are agreed.
 
 ## Verification
 
