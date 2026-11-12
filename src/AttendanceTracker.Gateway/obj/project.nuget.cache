@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "dgSpecHash": "jikqHM2wk7E=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\abdul\\OneDrive - Turun ammattikorkeakoulu\\Documents\\GitHub\\Attendance-Tracker-\\src\\AttendanceTracker.Gateway\\AttendanceTracker.Gateway.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\abdul\\Documents\\Codex\\2026-11-12\\w\\work\\nuget-packages\\system.io.hashing\\8.0.0\\system.io.hashing.8.0.0.nupkg.sha512",
+    "C:\\Users\\abdul\\Documents\\Codex\\2026-11-12\\w\\work\\nuget-packages\\yarp.reverseproxy\\2.3.0\\yarp.reverseproxy.2.3.0.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "message": "Error occurred while getting package vulnerability data: Access to the path is denied.",
+      "projectPath": "C:\\Users\\abdul\\OneDrive - Turun ammattikorkeakoulu\\Documents\\GitHub\\Attendance-Tracker-\\src\\AttendanceTracker.Gateway\\AttendanceTracker.Gateway.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\abdul\\OneDrive - Turun ammattikorkeakoulu\\Documents\\GitHub\\Attendance-Tracker-\\src\\AttendanceTracker.Gateway\\AttendanceTracker.Gateway.csproj",
+      "targetGraphs": []
+    }
+  ]
+}
