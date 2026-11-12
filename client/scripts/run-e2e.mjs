@@ -20,8 +20,8 @@ for (const file of [apiDll, gatewayDll, playwrightCli]) {
 const env = {
   ...process.env,
   ASPNETCORE_ENVIRONMENT: 'Development',
-  DOTNET_ROOT: process.env.DOTNET_ROOT || process.env.DOTNET_ROOT_X64 || '',
 }
+if (!env.DOTNET_ROOT && process.env.DOTNET_ROOT_X64) env.DOTNET_ROOT = process.env.DOTNET_ROOT_X64
 const children = []
 const start = (command, args, cwd) => {
   const child = spawn(command, args, { cwd, env, stdio: 'inherit', windowsHide: true })

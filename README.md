@@ -111,7 +111,7 @@ The MVP intentionally leaves substantial work for all four team members. Agree o
 
 ## Verification
 
-Build the backend and client with `dotnet build AttendanceTracker.sln`, `cd client && npm install && npm run build`. The browser end-to-end test is `cd client && npm run test:e2e`; it launches the API, gateway, and Vite client and requires Playwright Chromium. Set `DOTNET_EXE` if the SDK executable is not on PATH.
+Build the backend and client with `dotnet build AttendanceTracker.sln`, then `cd client && npm install && npm run build`. Install the test browser once with `npx playwright install chromium`. Run `npm run test:e2e` from `client`; it launches the API, gateway, and Vite client, runs the teacher-to-student check-in flow, and shuts the local processes down afterward. Set `DOTNET_EXE` if the SDK executable is not on PATH.
 
 ## Current limitations
 
