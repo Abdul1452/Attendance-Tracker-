@@ -6,10 +6,10 @@ A responsive attendance app prototype for instructors and students. A teacher ca
 
 You only need **Node.js 22 or newer** and npm. From the project folder:
 
-```powershell
+```bash
 cd client
-npm.cmd install
-npm.cmd run dev
+npm install
+npm run dev
 ```
 
 Open the local address printed by Vite (normally `http://localhost:5173`). This starts the web and mobile-responsive PWA and its local demo API together. You do not need a .NET SDK, database, Docker, or separate API terminal to try the app.
@@ -32,10 +32,10 @@ The Vite handlers are a local coursework demo, not a production backend. Attenda
 
 Install the Playwright browser once:
 
-```powershell
+```bash
 cd client
-npx.cmd playwright install chromium
-npm.cmd run test:e2e
+npx playwright install chromium
+npm run test:e2e
 ```
 
 The test command starts the Vite app, checks a teacher-started session, submits a student's six-digit code, verifies the saved confirmation, and confirms the teacher roster receives the attendance.
@@ -44,7 +44,7 @@ The test command starts the Vite app, checks a teacher-started session, submits 
 
 The first local demo is intentionally small. These four suggested workstreams leave at least five concrete tasks per teammate; agree on owners and acceptance criteria together.
 
-### Member 1 — Real backend and attendance data
+### Hossain Daloar — Real backend and attendance data
 
 1. Choose the team's backend and storage approach and document the trade-offs.
 2. Replace the Vite demo handlers with a maintainable API service.
@@ -53,7 +53,7 @@ The first local demo is intentionally small. These four suggested workstreams le
 5. Implement manual Present, Absent, Late, and Excused status changes.
 6. Add correction reasons and an audit trail for attendance edits.
 
-### Member 2 — Accounts, access, and QR security
+### Aziz Ullah Muhammad — Accounts, access, and QR security
 
 1. Replace demo buttons and sample accounts with the team's chosen sign-in flow.
 2. Enforce student and teacher permissions on server routes.
@@ -62,7 +62,7 @@ The first local demo is intentionally small. These four suggested workstreams le
 5. Add rate limits and replay/guessing protection for QR check-in.
 6. Test expired codes, duplicate attendance, wrong roles, and cross-course access.
 
-### Member 3 — Containers and deployment
+### Abdulwasiu Abdullahi Olamilekan — Containers and deployment
 
 1. Create a multi-stage Dockerfile for the web client.
 2. Create a Dockerfile for the API once the team selects its backend.
@@ -71,7 +71,7 @@ The first local demo is intentionally small. These four suggested workstreams le
 5. Add a deployment guide for the team's chosen host.
 6. Add CI to install dependencies, build the app, run checks, and build container images.
 
-### Member 4 — Product completion and quality
+### Emmanuel Ebere — Product completion and quality
 
 1. Finish attendance history, reports, date filters, and exports.
 2. Add roster management, enrollment, student schedule, and profile flows.
