@@ -8,7 +8,7 @@ type Session = { id: string; course: string; room: string; code?: string; starts
 type Entry = { studentId: string; studentName: string; initials: string; status: string; recordedAt: string }
 type Student = { id: string; name: string; initials: string; email: string; course?: string }
 type Dashboard = { course: string; courseCode: string; room: string; teacher: string; totalStudents: number; averageAttendance: number; classesThisWeek: number; checkedIn: number; activeSession: Session | null; attendance: Entry[]; students: Student[] }
-const API = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5050'
+const API = ''
 const colors = ['#d9e7ff','#f9e9c7','#e4ddf8','#d7ede7','#f5dce2','#dcebd2']
 async function api<T>(path: string, token?: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API}${path}`, { ...init, headers: { 'Content-Type':'application/json', ...(token ? { Authorization:`Bearer ${token}` } : {}), ...init?.headers } })

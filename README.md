@@ -1,122 +1,86 @@
 # Rollcall — Attendance Tracker
 
-A responsive attendance tracker for instructors and students. The current MVP demonstrates a teacher starting a class check-in, displaying a rotating QR code, and seeing a student's saved attendance arrive on the teacher dashboard. Students can scan the code with a supported phone browser or type its six-digit fallback.
+A responsive attendance app prototype for instructors and students. A teacher can open a class check-in, show a rotating QR code, and see student arrivals appear on the roster. Students can scan the QR code on supported phones or enter its six-digit fallback.
 
-> **Project status:** MVP for team development. The main teacher and student flows work locally. This is not a production-ready attendance system: demo authentication and process-memory data are used so the team can contribute persistence, identity, security, reporting, and deployment work.
+## Run the app
 
-## Architecture and selected stack
-
-- **Web and mobile:** React 19, TypeScript, Vite, responsive installable PWA.
-- **API Gateway:** YARP reverse proxy.
-- **Backend:** .NET 10 REST API organized as Domain, Application, Infrastructure, and API projects.
-- **Storage:** in-memory demo store for now. It resets when the API restarts. Choose and implement persistent storage as a team contribution.
-- **Design:** Butter Yellow `#F4D879`, Dark Cocoa `#382820`, and Electric Blue `#315CFF`.
-
-```mermaid
-flowchart LR
-  T[Teacher browser] --> P[PWA on Vite]
-  S[Student phone] --> P
-  P --> G[YARP API Gateway :5050]
-  G --> A[Attendance API :5080]
-  A --> D[In-memory demo store]
-```
-
-The Figma design reference is [Attendance Tracker Prototype](https://www.figma.com/make/PorOMg0hT9GjNiXGa06Z98/Attendance-Tracker-Prototype?t=HyRmVDl3OcgbmsN9-0).
-
-## Run locally
-
-Requirements: .NET 10 SDK, Node.js 22 or newer, and npm.
-
-Open three terminals at the repository root:
+You only need **Node.js 22 or newer** and npm. From the project folder:
 
 ```powershell
-# Terminal 1: API
-dotnet run --project src/AttendanceTracker.Api --urls http://localhost:5080
-
-# Terminal 2: API Gateway
-dotnet run --project src/AttendanceTracker.Gateway --urls http://localhost:5050
-
-# Terminal 3: PWA
 cd client
-npm install
-npm run dev
+npm.cmd install
+npm.cmd run dev
 ```
 
-Open `http://localhost:5173`. The gateway's health endpoint is `http://localhost:5050/health`; the API health endpoint is `http://localhost:5080/health`.
+Open the local address printed by Vite (normally `http://localhost:5173`). This starts the web and mobile-responsive PWA and its local demo API together. You do not need a .NET SDK, database, Docker, or separate API terminal to try the app.
 
-### Demo access
+Use the sign-in page's teacher or student demo buttons. The sample password is `Demo123!`. For the full flow, sign in as the teacher in one browser, start attendance, then sign in as Alex in a second browser or private window. Scan the QR code or enter the six-digit code shown beneath it. The teacher's roster refreshes automatically.
 
-Use the role buttons on the sign-in page. Both roles use the local demo password shown on the page (`Demo123!`). The demo teacher is `teacher@attendance.local`; the demo student is `alex@student.attendance.local`.
+Camera check-in uses the browser's `BarcodeDetector` where available. It needs camera permission and a secure browser context; localhost qualifies during development. The six-digit code is the fallback.
 
-For a complete check-in demonstration, open a teacher browser and a separate student browser/profile. Start attendance as the teacher, copy the six-digit fallback beneath the teacher QR, then sign in as Alex and use **Scan class QR code** or enter that fallback. The teacher roster updates automatically. Camera scanning requires a secure context and browser support for `BarcodeDetector`; local development on `localhost` is allowed, and the manual code works when camera scanning is unavailable.
+## What is running locally
 
-The active-session lookup only returns public session details and expiry time; the QR code itself is returned to an authenticated teacher. Attendance submissions use the signed-in student's account, reject stale codes, and prevent duplicate attendance for a student in the same session.
+- **Client:** React, TypeScript, Vite, and an installable responsive PWA.
+- **Demo API:** same-origin request handlers in `vite.config.ts`. They keep sample users, sessions, and attendance in memory while the dev server runs.
+- **UI colors:** Butter Yellow `#F4D879`, Dark Cocoa `#382820`, and Electric Blue `#315CFF`.
 
-## API routes in the MVP
+The design reference is [Attendance Tracker Prototype in Figma](https://www.figma.com/make/PorOMg0hT9GjNiXGa06Z98/Attendance-Tracker-Prototype?t=HyRmVDl3OcgbmsN9-0).
 
-| Route | Purpose |
-| --- | --- |
-| `POST /api/auth/login` | Local demo sign-in for teacher or student |
-| `GET /api/dashboard` | Teacher course dashboard and current roster |
-| `POST /api/sessions` | Teacher starts a session and receives its QR payload |
-| `GET /api/sessions/active` | Student-safe active session details (no QR secret) |
-| `POST /api/sessions/{id}/refresh-code` | Teacher rotates the short-lived check-in code |
-| `POST /api/sessions/{id}/close` | Teacher ends check-in |
-| `POST /api/attendance/check-in` | Signed-in student checks in with QR/manual code |
-| `GET /api/sessions/{id}/attendance` | Teacher reads the saved session roster |
-| `GET /api/me/attendance` | Student reads their attendance records |
+The Vite handlers are a local coursework demo, not a production backend. Attendance resets when the dev server restarts. The dashboard also includes sample metric values. The previous .NET 10 scaffold is retained under `legacy-dotnet/` for reference, but is not used by this run path. No .NET SDK is needed to try the web app.
 
-The API exposes OpenAPI in development. A polished interactive API reference and request/response examples remain a team task.
+## End-to-end check
 
-## Team contribution backlog
+Install the Playwright browser once:
 
-The MVP intentionally leaves substantial work for all four team members. Agree on owners and acceptance criteria together; these are suggested workstreams, not assigned roles.
+```powershell
+cd client
+npx.cmd playwright install chromium
+npm.cmd run test:e2e
+```
 
-### Member 1 — Persistence and attendance domain
+The test command starts the Vite app, checks a teacher-started session, submits a student's six-digit code, verifies the saved confirmation, and confirms the teacher roster receives the attendance.
 
-1. Replace `AttendanceStore` process memory with EF Core repositories and a persistent local database.
-2. Add schema migrations and seed data that can be safely re-applied.
-3. Model institutions, courses, enrollments, class sessions, and attendance records with appropriate keys and constraints.
-4. Implement manual attendance marking and correction with reason, actor, timestamp, and audit history.
-5. Add course, enrollment, roster, and attendance CRUD use cases with validation.
-6. Write domain and repository tests for duplicates, concurrency, session closure, and invalid status changes.
+## Team backlog
 
-### Member 2 — Identity, authorization, and QR security
+The first local demo is intentionally small. These four suggested workstreams leave at least five concrete tasks per teammate; agree on owners and acceptance criteria together.
 
-1. Replace the local demo login and hard-coded signing key with the selected institutional identity provider or a proper identity service.
-2. Add production token issuance, expiry, renewal, revocation, and logout behavior.
-3. Enforce role and course-enrollment authorization on every API route; add per-course teacher ownership rules.
-4. Move secrets, key storage, CORS origins, and allowed hosts into environment-based configuration.
-5. Strengthen QR check-in against replay, clock skew, code guessing, and excessive requests; document the threat model.
-6. Add security tests for expired tokens, unauthorized roles, stale QR codes, cross-course access, and repeated check-ins.
+### Member 1 — Real backend and attendance data
 
-### Member 3 — Containers, deployment, and operations
+1. Choose the team's backend and storage approach and document the trade-offs.
+2. Replace the Vite demo handlers with a maintainable API service.
+3. Add persistent storage, schema migrations, and safe repeatable seed data.
+4. Model courses, enrollments, class sessions, and attendance with database constraints.
+5. Implement manual Present, Absent, Late, and Excused status changes.
+6. Add correction reasons and an audit trail for attendance edits.
 
-1. Create multi-stage Dockerfiles for the React PWA, .NET API, and YARP gateway.
-2. Add a Docker Compose environment with persistent database storage and service dependencies.
-3. Configure container health checks, startup ordering, non-root execution, and graceful shutdown.
-4. Externalize ports, database connection strings, gateway destinations, CORS origins, and secrets for each environment.
-5. Add a production build and deployment guide for the team's chosen hosting platform.
-6. Add CI that builds the client and backend, runs automated tests, and checks container images.
+### Member 2 — Accounts, access, and QR security
 
-### Member 4 — Product completion and verification
+1. Replace demo buttons and sample accounts with the team's chosen sign-in flow.
+2. Enforce student and teacher permissions on server routes.
+3. Restrict teacher access to their own course rosters.
+4. Store signing keys and configuration outside source code.
+5. Add rate limits and replay/guessing protection for QR check-in.
+6. Test expired codes, duplicate attendance, wrong roles, and cross-course access.
 
-1. Finish attendance history, reports, date filters, exports, and the remaining student schedule/profile journeys.
-2. Add instructor roster management, absence/late/excused states, empty states, and correction workflows.
-3. Expand end-to-end tests to cover duplicate attempts, code expiry/rotation, closed sessions, permissions, and responsive layouts.
-4. Test camera QR scanning on real mobile devices and provide accessible fallbacks when camera permission is denied or unsupported.
-5. Review every screen and form for WCAG 2.2 AA contrast, keyboard access, focus order, labels, and screen-reader feedback.
-6. Add loading, offline, network error, no-results, and recovery states; finish the dark theme and responsive design tokens.
-7. Update OpenAPI examples and the team runbook after the remaining routes and flows are agreed.
+### Member 3 — Containers and deployment
 
-## Verification
+1. Create a multi-stage Dockerfile for the web client.
+2. Create a Dockerfile for the API once the team selects its backend.
+3. Add Docker Compose with persistent storage and service health checks.
+4. Configure environment-specific ports, API addresses, and secrets.
+5. Add a deployment guide for the team's chosen host.
+6. Add CI to install dependencies, build the app, run checks, and build container images.
 
-Build the backend and client with `dotnet build AttendanceTracker.sln`, then `cd client && npm install && npm run build`. Install the test browser once with `npx playwright install chromium`. Run `npm run test:e2e` from `client`; it launches the API, gateway, and Vite client, runs the teacher-to-student check-in flow, and shuts the local processes down afterward. Set `DOTNET_EXE` if the SDK executable is not on PATH.
+### Member 4 — Product completion and quality
 
-## Current limitations
+1. Finish attendance history, reports, date filters, and exports.
+2. Add roster management, enrollment, student schedule, and profile flows.
+3. Expand end-to-end cases for duplicates, expired codes, closed sessions, and role access.
+4. Test phone camera scanning on real devices and improve permission/error fallbacks.
+5. Review contrast, keyboard flow, focus states, labels, and screen-reader announcements against WCAG 2.2 AA.
+6. Finish loading, offline, error, empty, and no-results states plus the dark theme.
+7. Document API examples and refresh the runbook after the backend is selected.
 
-- Attendance data is stored in process memory and disappears on API restart.
-- Demo login accounts, password, and signing key are for local coursework demos only.
-- Dashboard metrics, attendance history, and schedule content include sample values.
-- No Dockerfiles, Compose setup, production deployment, CI, or real institutional sign-in are included; these are reserved for the team backlog above.
-- The current app focuses on QR/manual check-in and a small sample roster. Reports, full course administration, and production-grade authorization remain to be completed.
+## API demo routes
+
+The local demo implements `/api/auth/login`, `/api/dashboard`, `/api/sessions`, `/api/sessions/active`, `/api/sessions/{id}/refresh-code`, `/api/sessions/{id}/close`, `/api/attendance/check-in`, `/api/sessions/{id}/attendance`, and `/api/me/attendance`. A production API, gateway, persistent database, and deployment pipeline are deliberately left for the team backlog.
