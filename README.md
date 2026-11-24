@@ -26,7 +26,7 @@ Camera check-in uses the browser's `BarcodeDetector` where available. It needs c
 
 The design reference is [Attendance Tracker Prototype in Figma](https://www.figma.com/make/PorOMg0hT9GjNiXGa06Z98/Attendance-Tracker-Prototype?t=HyRmVDl3OcgbmsN9-0).
 
-The Vite handlers are a local coursework demo, not a production backend. Attendance resets when the dev server restarts. The dashboard also includes sample metric values. The previous .NET 10 scaffold is retained under `legacy-dotnet/` for reference, but is not used by this run path. No .NET SDK is needed to try the web app.
+The Vite handlers are a local coursework demo, not a production backend. Attendance resets when the dev server restarts, and the dashboard includes sample metric values. Production persistence and a standalone API/gateway remain team work.
 
 ## End-to-end check
 
