@@ -13,7 +13,12 @@ for (const file of [vite, playwright]) {
   }
 }
 
-const server = spawn(process.execPath, [vite, '--host', '127.0.0.1'], { cwd: client, stdio: 'inherit', windowsHide: true })
+const server = spawn(process.execPath, [vite, '--host', '127.0.0.1'], {
+  cwd: client,
+  stdio: 'inherit',
+  windowsHide: true,
+  env: { ...process.env, ATTENDANCE_CODE_TTL_MS: '30000' },
+})
 const waitForServer = async () => {
   const deadline = Date.now() + 30000
   while (Date.now() < deadline) {
